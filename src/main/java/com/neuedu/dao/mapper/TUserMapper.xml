@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 1.xml的名字和接口的名字相同，
+	2.namespace等于接口的完全限定名 
+	3.id是接口的方法名
+	4.parameterType与入参类型相同
+	5.resultType与出参类型相同
+		-->
+<mapper namespace="com.neuedu.dao.mapper.TUserMapper">
+	<select id="findUserById" parameterType="int" resultType="tUser">
+		select * from t_user where userId=#{userId}
+	
+	</select>
+	
+	<delete id="delUser" parameterType="int" >
+		delete from t_user where userId=#{userId}
+	</delete>
+	
+	<select id="findByParam" parameterType="TUser" resultType="TUser">
+		<!-- 动态拼接查询语句 -->
+		select * from t_user
+		<where>
+		<!-- 如果用户输入了用户名 --> 
+		<if test="userName!=null and userName!=''">
+		username=#{userName}
+		</if>
+		<!-- 如果用户输入了性别 -->
+		<if test="userSex!=null and userSex!=''">
+		and usersex=#{userSex}
+		</if>
+		</where>
+		
+	</select>
+	<update id="updateByParam" parameterType="tUser">
+		update t_user
+		<set>
+		<if test="password!=null and password!=''">
+		password=#{password},
+		</if>
+		<if test="userName!=null and userName!=''">
+		username=#{userName},
+		</if>
+		<if test="userSex!=null and userSex!=''">
+		usersex=#{userSex},
+		</if>
+		<if test="delTag!=null and delTag!=''">
+		delTag=#{delTag}
+		</if>
+		</set>
+		
+		where userId=#{userId}
+		
+	</update>
+	
+	<insert id="saveByParam" parameterType="tUser">
+		insert into t_user
+		<!-- trim语句可以实现在指定字符串前面加什么，后面加什么，前面去掉什么，后面去掉什么 
+		(userid,username,password,usersex,deltag)-->
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		userid,username,
+		<if test="password!=null and password!=''">
+		password,
+		</if>
+		<if test="userSex!=null and userSex!=''">
+		usersex,
+		</if>
+		<if test="delTag!=null and delTag!=''">
+		deltag,
+		</if>
+		</trim>
+		
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			null,#{userName},
+			<if test="password!=null and password!=''">
+				#{password},
+			</if>
+			<if test="userSex!=null and userSex!=''">
+				#{userSex},
+			</if>
+			<if test="delTag!=null and delTag!=''">
+				#{delTag},
+			</if>
+		</trim>	
+		<!-- (null,#{userName},#{password},#{userSex},#{delTag}) -->
+	</insert>
+	
+	<sql id="delsql">
+	delete from t_user where userId in
+	</sql>
+	
+	<delete id="delByListParam" >
+	<include refid="delsql"></include>
+	<foreach collection="list" item="item" open="(" close=")" separator=",">
+		#{item}
+	</foreach>
+	<!-- (1,2,3,4,5)用foreach拼串
+	collection只有两个值一个list，表示List，一个array，表示java数组
+	item循环到的每一个值的别名
+	open表示前缀
+	close表示后缀
+	separator表示分隔符，最后会自动去掉多余的
+	 -->
+	</delete>
+	<delete id="delByArrayParam">
+	<include refid="delsql"></include>
+	<foreach collection="array" item="item" open="(" close=")" separator=",">
+		#{item}
+	</foreach>
+	</delete>
+	
+	<!-- 批量插入 -->
+	<!-- null,#{item.password},#{item.userName},#{item.userSex},#{item.delTag} -->
+	<!-- null,#{item.getPassword()},#{item.getUserName()},#{item.getUserSex()},#{item.getDelTag()} -->
+	<!-- null,#{item.password,jdbcType=VARCHAR},#{item.userName,jdbcType=VARCHAR},#{item.userSex,jdbcType=VARCHAR},#{item.delTag,jdbcType=VARCHAR}
+	 -->
+	<insert id="multiInsert" parameterType="java.util.List">
+	insert t_user(userId,password,userName,userSex,delTag) values
+	<foreach collection="List" item="item" index="index" separator=",">
+		(null,#{item.password},#{item.userName},#{item.userSex},#{item.delTag})
+	</foreach>
+	
+	</insert>
+</mapper>

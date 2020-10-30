@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.neuedu.dao.mapper.TWifeMapper">
+<!-- 关联映射方式，一对一时，返回值类型用resultMap指定类型 -->
+	<select id="findAllByWname" parameterType="String" resultMap="wifeMap">
+		SELECT a.w_id,a.w_name,a.h_id,b.h_name
+		from t_wife a,t_hus b
+		WHERE a.h_id=b.h_id
+		and w_name=#{w_name}
+		
+	</select>
+	<resultMap type="wife" id="wifeMap">
+		<!-- id用来写主键和wife实体间映射关系 ,property是实体类和属性名，column数据库里的字段名-->
+		<id property="w_id" column="w_id"/>
+		<result property="w_name" column="w_name"/>
+		<!-- 开始定义hus和wife之间的一对一关系 -->
+		<association property="hus" javaType="Husband">
+			<id property="h_id" column="h_id"/>
+			<result property="h_name" column="h_name"/>
+		</association>
+	</resultMap>
+	
+	<!-- 通用map方式 -->
+	<select id="findWifeMapByWname" parameterType="String" resultType="java.util.Map">
+		SELECT a.w_id,a.w_name,a.h_id,b.h_name
+		from t_wife a,t_hus b
+		WHERE a.h_id=b.h_id
+		and w_name=#{w_name}
+		
+	</select>
+	
+	
+	
+</mapper>

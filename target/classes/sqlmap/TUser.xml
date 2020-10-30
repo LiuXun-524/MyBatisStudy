@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tuser">
+	<!-- 
+	tuser是实体类的别名
+	下面开始配置CRUD的方法名，参数类型，结果集类型，执行sql语句
+	resultType如果是查询需要指定，增删改时不用指定，因为固定是int
+	 -->
+	<select id="findUserById" parameterType="int" resultType="TUser">
+		<!-- 用#{}里面指定参数，相当于？ -->
+		select * from t_user where userId=#{userId}
+	</select>
+	<insert id="add" parameterType="TUser">
+		insert t_user values(null,#{password},#{userName},#{userSex},1)
+	</insert>
+	<update id="update" parameterType="TUser">
+		update t_user set password=#{password} where userName=#{userName}
+	</update>
+	<delete id="delete" parameterType="TUser">
+		delete from t_user where userName=#{userName}
+	</delete>
+</mapper>

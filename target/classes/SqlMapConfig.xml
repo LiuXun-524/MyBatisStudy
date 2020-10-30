@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置数据库链接 -->
+<!-- 映射文件位置，sql语句输入参数什么类型，输出结果什么类型 -->
+<!-- 事务管理 -->
+<!-- 别名 -->
+<!-- 缓存管理 -->
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<properties resource="db.properties"></properties>
+<typeAliases>
+<!-- 别名定义方式第一种  一个一个定义  不建议使用 -->
+<!-- <typeAlias type="com.neuedu.pojo.TUser" alias="TUser"/> -->
+<!-- 整包指定别名时，系统自动为包下的实体类自动指定了别名，别名有两种形式 第一种类名  第二种类名首字母小写 -->
+	<package name="com.neuedu.pojo"/>
+</typeAliases>
+<!-- 配置数据库连接 -->
+<environments default="development">
+	
+	<environment id="development">
+	<transactionManager type="JDBC"/>
+	<dataSource type="POOLED">
+	<property name="driver" value="${driver}"/>
+	<property name="url" value="${url}"/>
+	<property name="username" value="${username}"/>
+	<property name="password" value="${password}"/>
+	</dataSource>
+	</environment>
+	
+</environments>
+<!-- 映射文件位置（sql语句 输入的参数什么类型 输出的结果什么类型） -->
+<mappers>
+<!-- 第一种  方式相对于类路径下的xml  一个一个的指定 -->
+<mapper resource="sqlmap/TUser.xml"/>
+<!--第二种 指定xml文件在磁盘上的位置 这种方式不好，不建议使用
+<mapper url="E:\workspace\maven2\src\main\resources\sqlmap\User.xml"/>-->
+
+<!--第三种 class方式 属于mapper代理方式的配置，他需要满足四个条件才可以用。
+（接口与mapper之间有四种强制的绑定关系）  一个一个的指定-->
+<!--<mapper class="com.neuedu.mapper.UserMappper"/>-->
+
+<!-- 第四种：整包扫描,跟第三种一样，只有mapper代理方式可以用。  学完 mapper代理开发后会用整包扫描的方式 -->
+<package name="com.neuedu.dao.mapper"/>
+
+</mappers>
+
+</configuration>
+
